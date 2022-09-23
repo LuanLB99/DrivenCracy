@@ -18,7 +18,8 @@ async function MakeChoice(req, res){
         if(!surveyChoiced){return res.sendStatus(404)};
         await db.collection('polls').insertOne({
             title,
-            pollId
+            pollId,
+            votes:0
         })
     } catch (error) {
         console.log(error.message)
@@ -35,7 +36,7 @@ async function VoteChoice(req, res){
     try {
         const polls = await db.collection('polls').find().toArray();
         const votedPoll = polls.find(poll => poll._id == id);
-        db.collection("votes").insertOne({
+        await db.collection("votes").insertOne({
             id:votedPoll._id,
             data:Date.now()
         })
