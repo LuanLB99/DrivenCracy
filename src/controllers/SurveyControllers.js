@@ -38,7 +38,29 @@ async function CreateSurvey (req, res){
         console.log(error.message)
     }
 
+
     res.sendStatus(200);
 }
 
-export { GetSurveys, CreateSurvey }
+
+async function GetPolls(req, res){
+    const { id } = req.params;
+
+    try {
+        const polls = await db.collection('polls').find({pollId:id}).toArray();
+        if(!polls){return res.sendStatus(404)}
+        return res.send(polls);
+    } catch (error) {
+        console.log(error.message)
+    }
+
+    res.send("ok");
+}
+
+async function GetResult(req, res){
+    const { id } = req.params;
+
+    
+}
+
+export { GetSurveys, CreateSurvey, GetPolls }
