@@ -1,5 +1,7 @@
 import db from "../../db.js";
 import joi from "joi";
+import { ObjectId } from "mongodb";
+import dayjs from "dayjs";
 
 const surveySchema = joi.object({
     title:joi.string().required().empty('').min(3)
@@ -8,7 +10,7 @@ const surveySchema = joi.object({
 async function GetSurveys (req, res){
 
     try {
-        const surveys = await db.collection('test').find().toArray();
+        const surveys = await db.collection('surveys').find().toArray();
         return res.send(surveys)
     } catch (error) {
         console.log(error.message)
@@ -20,20 +22,27 @@ async function CreateSurvey (req, res){
     const {title, expireAt} = req.body;
 
     const validation = surveySchema.validate({title});
-
     if(validation.error){
         return res.sendStatus(422)
     }
+    if(!expireAt){let newExpire = dayjs().add(30,'day').format('HH:mm DD-MM-YYYY')
+    const survey = {title, expireAt:newExpire};
+    db.collection('surveys').insertOne({
+        survey
+    })
+    return res.status(201).send(survey)
+}
 
-
+    
+   
     try {
-        await db.collection('test').insertOne({
+       await db.collection('surveys').insertOne({
             title,
-            expireAt
+           expireAt
         })
 
-        const survey = {title, expireAt};
-       return res.sendStatus(201)
+        return res.sendStatus(201)
+       
     } catch (error) {
         console.log(error.message)
     }
@@ -47,7 +56,7 @@ async function GetPolls(req, res){
     const { id } = req.params;
 
     try {
-        const polls = await db.collection('polls').find({pollId:id}).toArray();
+        const polls = await db.collection('choices').find({pollId:id}).toArray();
         if(!polls){return res.sendStatus(404)}
         return res.send(polls);
     } catch (error) {
@@ -61,18 +70,29 @@ async function GetResult(req, res){
     const { id } = req.params;
 
     try {
-        const surveys = await db.collection('test').find().toArray();
-        const survey = surveys.find(survey => survey._id == id);
-        const votes = await db.collection('votes').find().toArray();
-        console.log(votes)
-
-        const result = {
-            survey,
-            result:{
-                votes:votes.length
+        const choices = await db.collection('choices').find({pollId:id}).toArray();
+        let number = choices[0].votes;
+        let myChoice;
+        for(let i = 0; i < choices.length; i++){
+            const mynumber = choices[i].votes;
+            console.log(number, mynumber)
+            if(mynumber > number){
+                number = choices[i].votes;
+                myChoice = choices[i]; 
             }
         }
+        const survey = await db.collection('surveys').findOne({_id: new ObjectId(id)})
+        console.log(survey)
+            const result = {
+                title:survey.title,
+                expireAt:survey.expireAt,
+                result:{
+                    title:myChoice.title,
+                    votes:myChoice.votes
+                }
+            }
         return res.send(result)
+        
     } catch (error) {
         
     }
