@@ -22,7 +22,10 @@ async function MakeChoice(req, res){
 
         const choiceExist = await db.collection('choices').findOne({title});
         if(choiceExist){return res.sendStatus(409)};
-        const now = dayjs().format('HH:mm DD-MM-YYYY');
+        if(surveyChoiced.expireAt < dayjs().format("HH:mm DD-MM-YYYY") ){
+            return res.sendStatus(403)
+        }
+
         await db.collection('choices').insertOne({
            title,
            pollId,
@@ -51,12 +54,10 @@ async function VoteChoice(req, res){
                 date:dayjs().format('HH:mm DD-MM-YYYY')
             }
         ];
-
-        /*const now = dayjs().format("HH:mm DD-MM-YYYY");
              
-        if(now > surveyChoiced.expireAt){
+        if(surveyChoiced.expireAt < dayjs().format("HH:mm DD-MM-YYYY") ){
             return res.sendStatus(403)
-        } */
+        }
     const newVote = votedChoice.votes +1;
     const newChoice = {...votedChoice, votes:newVote, dateVote:newDate};
     const att = await db.collection('choices').updateOne({_id:votedChoice._id},{$set: newChoice})
