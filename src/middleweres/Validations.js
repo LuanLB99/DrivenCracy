@@ -9,6 +9,8 @@ export async function validateSurvey(req, res, next){
 
     const validation = surveySchema.validate({title});
     if(validation.error){return res.sendStatus(422)}
+    res.locals.user = expireAt;
+
     next();
 }
 
@@ -25,5 +27,6 @@ export async function validateChoice(req,res,next){
     const validation = choiceSchema.validate({title});
 
     if(validation.error){return res.sendStatus(422)}
+    res.locals.user = pollId;
     next();
 }

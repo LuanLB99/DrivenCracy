@@ -1,6 +1,7 @@
 import  express from "express";
 import { CreateSurvey, GetPolls, GetResult, GetSurveys } from "../controllers/SurveyControllers.js";
 import { validateSurvey } from "../middleweres/Validations.js";
+
 const routes = express.Router();
 
 routes.get('/poll', GetSurveys);

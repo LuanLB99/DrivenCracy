@@ -6,7 +6,7 @@ import dayjs from "dayjs";
 
 
 async function MakeChoice(req, res){
-    
+       const pollId = res.locals.user
     try {
         const surveys = await db.collection('surveys').find().toArray();
         const surveyChoiced = surveys.find(survey => survey._id == pollId);

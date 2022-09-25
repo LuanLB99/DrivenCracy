@@ -15,6 +15,7 @@ async function GetSurveys (req, res){
 }
 
 async function CreateSurvey (req, res){
+    const expireAt = res.locals.user;
     
     if(!expireAt){let newExpire = dayjs().add(30,'day').format('HH:mm DD-MM-YYYY')
     const survey = {title, expireAt:newExpire};
