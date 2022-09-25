@@ -1,11 +1,7 @@
 import db from "../../db.js";
-import joi from "joi";
 import { ObjectId } from "mongodb";
 import dayjs from "dayjs";
 
-const surveySchema = joi.object({
-    title:joi.string().required().empty('').min(3)
-})
 
 async function GetSurveys (req, res){
 
@@ -19,12 +15,7 @@ async function GetSurveys (req, res){
 }
 
 async function CreateSurvey (req, res){
-    const {title, expireAt} = req.body;
-
-    const validation = surveySchema.validate({title});
-    if(validation.error){
-        return res.sendStatus(422)
-    }
+    
     if(!expireAt){let newExpire = dayjs().add(30,'day').format('HH:mm DD-MM-YYYY')
     const survey = {title, expireAt:newExpire};
    await db.collection('surveys').insertOne({

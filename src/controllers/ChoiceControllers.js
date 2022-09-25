@@ -4,17 +4,9 @@ import { ObjectId } from "mongodb";
 import dayjs from "dayjs";
 
 
-const choiceSchema = joi.object({
-    title: joi.string().required().empty('').min(3)
-})
 
 async function MakeChoice(req, res){
-    const {title, pollId} = req.body;
-
-    const validation = choiceSchema.validate({title});
-
-    if(validation.error){return res.sendStatus(422)}
-
+    
     try {
         const surveys = await db.collection('surveys').find().toArray();
         const surveyChoiced = surveys.find(survey => survey._id == pollId);
