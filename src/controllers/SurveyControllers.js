@@ -27,7 +27,7 @@ async function CreateSurvey (req, res){
     }
     if(!expireAt){let newExpire = dayjs().add(30,'day').format('HH:mm DD-MM-YYYY')
     const survey = {title, expireAt:newExpire};
-    db.collection('surveys').insertOne({
+   await db.collection('surveys').insertOne({
         survey
     })
     return res.status(201).send(survey)
@@ -81,8 +81,7 @@ async function GetResult(req, res){
                 myChoice = choices[i]; 
             }
         }
-        const survey = await db.collection('surveys').findOne({_id: new ObjectId(id)})
-        console.log(survey)
+        const survey = await db.collection('surveys').findOne({_id: new ObjectId(id)});
             const result = {
                 title:survey.title,
                 expireAt:survey.expireAt,
