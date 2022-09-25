@@ -22,11 +22,11 @@ async function MakeChoice(req, res){
 
         const choiceExist = await db.collection('choices').findOne({title});
         if(choiceExist){return res.sendStatus(409)};
-        
-            /*
-        if(now > surveyChoiced.expireAt){
-            return res.sendStatus(403)
-        } */
+        const now = dayjs().format('HH:mm DD-MM-YYYY');
+
+        if(dayjs(now).isBefore(dayjs(surveyChoiced.expireAt))){
+            console.log("data de expiração passada!")
+        }
 
         await db.collection('choices').insertOne({
            title,
