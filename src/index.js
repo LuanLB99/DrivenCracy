@@ -17,4 +17,4 @@ server.post('/choice/:id/vote', VoteChoice)
 server.get('/poll/:id/result', GetResult)
 
 
-server.listen(5000, () => console.log("the magic happens on port 5000"))
+server.listen(process.env.PORT, () => console.log("the magic happens on port 5000"))

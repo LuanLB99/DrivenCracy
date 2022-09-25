@@ -24,8 +24,8 @@ async function MakeChoice(req, res){
         if(choiceExist){return res.sendStatus(409)};
         const now = dayjs().format('HH:mm DD-MM-YYYY');
 
-        console.log((dayjs(now).isBefore(dayjs(surveyChoiced.expireAt))))
-
+        console.log((dayjs(surveyChoiced.expireAt).isBefore(dayjs(now))))
+        console.log(now, surveyChoiced.expireAt)
         await db.collection('choices').insertOne({
            title,
            pollId,
